@@ -1,6 +1,5 @@
 <?php
-    global $sname;
-    $fname;
+    $fname = "";
     $lname;
     //kawasan validasi
         $errors = array();   
@@ -38,6 +37,7 @@
             if (!isset($field_list[$field_name]) || empty($field_list[$field_name])){  
                 //pengecekan kolom terisi apa tidak
                 $ferrors = "* Kolom harus diisi";
+                $fname = "* Kolom harus diisi";
             }else if(!preg_match($pattern, $field_list[$field_name])){
                 $errors = "harus alfabet";
 
@@ -87,7 +87,7 @@
                     <input type="text" name="firstname">
                 </td>
                 <td class = "error"><?php
-                     if(isset($_POST["firstname"])){ echo $ferrors;}
+                     if(isset($_POST["firstname"])){ echo $fname;}
                 ?>
                 </td>
             </tr>

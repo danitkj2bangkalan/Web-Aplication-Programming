@@ -1,0 +1,9 @@
+CREATE DATABASE uas;
+use uas;
+
+CREATE TABLE if NOT EXISTS tabel01(
+	nama varchar(40) not null,
+    email varchar(40) not null,
+    wa varchar(20) not null
+	    
+);

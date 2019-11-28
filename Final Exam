@@ -22,3 +22,13 @@ ALTER TABLE table02
    
 ALTER table table02
 	add FOREIGN KEY (nim) REFERENCES tabel01(nim) on DELETE RESTRICT on UPDATE CASCADE
+
+#form tabel01
+<div>
+    <form action = '' method="POST" >
+        <div>
+            <label>Nama</label>
+            <input type="text" name="nama">
+        </div>        
+    </form>
+</div>

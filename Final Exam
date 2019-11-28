@@ -1,9 +1,24 @@
-CREATE DATABASE uas;
-use uas;
+CREATE DATABASE UAS;
+USE UAS;
 
-CREATE TABLE if NOT EXISTS tabel01(
-	nama varchar(40) not null,
+CREATE TABLE IF NOT EXISTS tabel01(
+	nim char(12) NOT null,
+    nama char(40) not null,
     email varchar(40) not null,
-    wa varchar(20) not null
-	    
+    wa char(20) not null,
+    password varchar(40) not null
 );
+
+CREATE TABLE if not EXISTS table02(
+	kode_ukm char(4) not null,
+    nama_ukm char(40) not null,
+    nim char(12) not null
+);
+
+alter TABLE tabel01
+	ADD PRIMARY KEY (nim);
+ALTER TABLE table02
+	ADD PRIMARY key (kode_ukm);
+   
+ALTER table table02
+	add FOREIGN KEY (nim) REFERENCES tabel01(nim) on DELETE RESTRICT on UPDATE CASCADE

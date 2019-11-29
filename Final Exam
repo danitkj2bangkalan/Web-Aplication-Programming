@@ -2,7 +2,8 @@ CREATE DATABASE UAS;
 USE UAS;
 
 CREATE TABLE IF NOT EXISTS tabel01(
-	nim char(12) NOT null,
+	--nim char(12) NOT null AUTO_INCREMENT,
+	nim char(12) NOT null,  
     nama char(40) not null,
     email varchar(40) not null,
     wa char(20) not null,

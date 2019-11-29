@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS tabel01(
     nama char(40) not null,
     email varchar(40) not null,
     wa char(20) not null,
-    password varchar(40) not null
+    password varchar(64) not null
 );
 
 CREATE TABLE if not EXISTS table02(

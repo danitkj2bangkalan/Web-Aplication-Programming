@@ -1,3 +1,29 @@
+>> jika menggunakan auto increment
+CREATE DATABASE UAS;
+USE UAS;
+
+CREATE TABLE tabel01(
+	id_person int NOT null AUTO_INCREMENT,  
+    nama varchar(40) not null,
+    email varchar(40) not null,
+    wa char(20) not null,
+    password varchar(64) not null,
+    PRIMARY KEY (id_person)
+);
+
+CREATE TABLE table02(
+	kode_ukm varchar(4) not null,
+    nama_ukm varchar(40) not null,
+    owner_id int not null
+);
+
+ALTER TABLE table02
+	ADD PRIMARY key (kode_ukm);
+   
+ALTER table table02
+	add FOREIGN KEY (owner_id) REFERENCES tabel01(id_person) on DELETE RESTRICT on UPDATE CASCADE
+
+>> jika tidak
 CREATE DATABASE UAS;
 USE UAS;
 

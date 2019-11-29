@@ -27,8 +27,24 @@ ALTER table table02
 <div>
     <form action = '' method="POST" >
         <div>
+            <label>Nim</label>
+            <input type="text" name="nim">
+        </div>
+        <div>
             <label>Nama</label>
             <input type="text" name="nama">
+        </div>
+        <div>
+            <label>Email</label>
+            <input type="text" name="email">
+        </div>
+        <div>
+            <label>Whatsapp</label>
+            <input type="text" name="wa">
+        </div>
+        <div>
+            <label>Password</label>
+            <input type="text" name="passwd">
         </div>        
     </form>
 </div>

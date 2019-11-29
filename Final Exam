@@ -2,7 +2,7 @@ CREATE DATABASE UAS;
 USE UAS;
 
 CREATE TABLE IF NOT EXISTS tabel01(
-	--nim char(12) NOT null AUTO_INCREMENT,
+	-- nim char(12) NOT null AUTO_INCREMENT,
 	nim char(12) NOT null,  
     nama char(40) not null,
     email varchar(40) not null,
@@ -25,45 +25,62 @@ ALTER table table02
 	add FOREIGN KEY (nim) REFERENCES tabel01(nim) on DELETE RESTRICT on UPDATE CASCADE
 
 >>form_tabel01.php
-<?php
-    include 'prosesdata.php';
-?>
 <div>
     <form action = 'prosesdata.php' method="POST" >
         <div>
             <label>Nim</label>
-            <input type="text" name="nim">
+            <input type="text" name="nim" value="<?php if(isset($_POST['nim'])) echo htmlspecialchars($_POST['nim'])?>">
         </div>
+        <?php echo "<div>";
+            if(isset($errors['nim'])) echo $errors['nim'];
+        echo "</div>";
+        ?>
         <div>
             <label>Nama</label>
-            <input type="text" name="nama">
+            <input type="text" name="nama" value="<?php if(isset($_POST['nama'])) echo htmlspecialchars($_POST['nama'])?>">
         </div>
+        <?php echo "<div>";
+            if(isset($errors['nama'])) echo $errors['nama'];
+        echo "</div>";
+        ?>
         <div>
             <label>Email</label>
-            <input type="text" name="email">
+            <input type="text" name="email" value="<?php if(isset($_POST['email'])) echo htmlspecialchars($_POST['email'])?>">
         </div>
+        <?php echo "<div>";
+            if(isset($errors['email'])) echo $errors['email'];
+        echo "</div>";
+        ?>
         <div>
             <label>Whatsapp</label>
-            <input type="text" name="wa">
+            <input type="text" name="wa" value="<?php if(isset($_POST['wa'])) echo htmlspecialchars($_POST['wa'])?>">
         </div>
+        <?php echo "<div>";
+            if(isset($errors['wa'])) echo $errors['wa'];
+        echo "</div>";
+        ?>
         <div>
             <label>Password</label>
-            <input type="Password" name="passwd">
+            <input type="Password" name="passwd" value="<?php if(isset($_POST['passwd'])) echo htmlspecialchars($_POST['passwd'])?>">
         </div>
+        <?php echo "<div>";
+            if(isset($errors['passwd'])) echo $errors['passwd'];
+        echo "</div>";
+        ?>
         <div>
             <input type="submit" name="ok" value="ok">
         </div>        
     </form>
 </div>
 
-prosesdata.php
+>>prosesdata.php
 <?php
-	$q = new PDO('mysql:HOST=localhost;dbname=uas', 'root', '');
+	$q = new PDO('mysql:HOST=localhost;dbname=uas1', 'root', '');
 	$q->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 	function pushdata(){
 		global $q;
-		$s = $q->prepare('INSERT INTO tabel01(nim,nama,email,wa,password) VALUES (:nim, :nama, :email, :wa, :password)');
+		$s = $q->prepare('INSERT INTO tabel01(nim,nama,email,wa,password) VALUES (:nim, :nama, :email, :wa, SHA2(:password,0))');
 		$s->bindValue(':nim',$_POST['nim']);
 		$s->bindValue(':nama',$_POST['nama']);
 		$s->bindValue(':email',$_POST['email']);
@@ -71,7 +88,64 @@ prosesdata.php
 		$s->bindValue(':password',$_POST['passwd']);
 		$s->execute();
 	}
-	if(isset($_POST['ok'])){
-		pushdata();
-	}
+
+	$errors=array();
+    if(isset($_POST['ok'])){
+        require 'validate.inc';
+        validateName($errors, $_POST, 'nama');
+        validateEmail($errors, $_POST, 'email');
+        validatePassword($errors, $_POST, 'passwd');
+        validateNumber($errors, $_POST, 'wa');
+        validateNumber($errors, $_POST, 'nim');
+        if($errors){
+            require 'form_tabel01.php';
+        }else{
+            pushdata(); 
+        }
+    }else{
+        require 'form_tabel01.php';
+    }
+?>
+
+>> VALIDATE.INC
+<?php
+
+function validateName(&$errors, $field_list, $field_name) {
+    if (!preg_match("/^[a-zA-Z ]*$/", $field_list[$field_name]))  
+        $errors[$field_name] = 'Hanya boleh alfabet';
+    else if (!isset($field_list[$field_name]) || empty($field_list[$field_name]))
+    	$errors[$field_name] = 'tidak boleh kosong';
+}
+
+function validateEmail(&$errors, $field_list, $field_name) {
+    if (!filter_var($field_list[$field_name], FILTER_VALIDATE_EMAIL))  
+        $errors[$field_name] = 'alamat email email tidak benar';
+    else if (!isset($field_list[$field_name]) || empty($field_list[$field_name]))
+    	$errors[$field_name] = 'tidak boleh kosong';
+} 
+
+function validatePassword(&$errors, $field_list, $field_name) {
+    if (!preg_match("/\w{8,20}/", $field_list[$field_name])) 
+        $errors[$field_name]= 'harus minimal 8 digit';
+    else if (!preg_match("/[0-9]/", $field_list[$field_name]))  
+        $errors[$field_name] = 'harus berisi nomer';
+    if(!preg_match("/\w{8,20}/", $field_list[$field_name])&&!preg_match("/[0-9]/", $field_list[$field_name]))
+     $errors[$field_name]= 'harus minimal 8 digit dan nomer';
+}
+
+function validateMatchPass(&$errors, $field_list, $field_name){
+    if (!isset($field_list[$field_name]) || empty($field_list[$field_name])) 
+        $errors[$field_name] = 'tidak boleh kosong';
+    else if ($field_list['password']!==$field_list[$field_name])
+        $errors[$field_name] = 'do not match';
+}
+
+function validateNumber(&$errors, $field_list, $field_name){
+    if (!isset($field_list[$field_name]) || empty($field_list[$field_name])) 
+        $errors[$field_name] = 'tidak boleh kosong';
+    else if (!preg_match("/[0-9]/", $field_list[$field_name])) 
+        $errors[$field_name]= 'harus berisi angka';
+    else if (!preg_match("/\w{12,20}/", $field_list[$field_name])) 
+        $errors[$field_name]= 'minimal 12';
+}
 ?>

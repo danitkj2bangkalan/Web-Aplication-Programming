@@ -23,9 +23,12 @@ ALTER TABLE table02
 ALTER table table02
 	add FOREIGN KEY (nim) REFERENCES tabel01(nim) on DELETE RESTRICT on UPDATE CASCADE
 
-#form tabel01
+>>form_tabel01.php
+<?php
+    include 'prosesdata.php';
+?>
 <div>
-    <form action = '' method="POST" >
+    <form action = 'prosesdata.php' method="POST" >
         <div>
             <label>Nim</label>
             <input type="text" name="nim">
@@ -44,7 +47,30 @@ ALTER table table02
         </div>
         <div>
             <label>Password</label>
-            <input type="text" name="passwd">
+            <input type="Password" name="passwd">
+        </div>
+        <div>
+            <input type="submit" name="ok" value="ok">
         </div>        
     </form>
 </div>
+
+prosesdata.php
+<?php
+	$q = new PDO('mysql:HOST=localhost;dbname=uas', 'root', '');
+	$q->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+	function pushdata(){
+		global $q;
+		$s = $q->prepare('INSERT INTO tabel01(nim,nama,email,wa,password) VALUES (:nim, :nama, :email, :wa, :password)');
+		$s->bindValue(':nim',$_POST['nim']);
+		$s->bindValue(':nama',$_POST['nama']);
+		$s->bindValue(':email',$_POST['email']);
+		$s->bindValue(':wa',$_POST['wa']);
+		$s->bindValue(':password',$_POST['passwd']);
+		$s->execute();
+	}
+	if(isset($_POST['ok'])){
+		pushdata();
+	}
+?>

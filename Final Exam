@@ -51,68 +51,79 @@ ALTER table table02
 	add FOREIGN KEY (nim) REFERENCES tabel01(nim) on DELETE RESTRICT on UPDATE CASCADE
 
 >>form_tabel01.php
-<div>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="style.css">
+    <title>UAS</title>
+</head>
+<body>
+    <div>
     <form action = 'prosesdata.php' method="POST" >
-        <div>
-            <label>Nim</label>
-            <input type="text" name="nim" value="<?php if(isset($_POST['nim'])) echo htmlspecialchars($_POST['nim'])?>">
+        <div class="grid-container">
+            <div>
+                <label>Nama</label>
+                <input type="text" name="nama" value="<?php if(isset($_POST['nama'])) echo htmlspecialchars($_POST['nama'])?>">
+            </div>
+            <?php echo "<div>";
+                if(isset($errors['nama'])) echo $errors['nama'];
+            echo "</div>";
+            ?>
+            <div>
+                <label>Email</label>
+                <input type="text" name="email" value="<?php if(isset($_POST['email'])) echo htmlspecialchars($_POST['email'])?>">
+            </div>
+            <?php echo "<div>";
+                if(isset($errors['email'])) echo $errors['email'];
+            echo "</div>";
+            ?>
+            <div>
+                <label>Whatsapp</label>
+                <input type="text" name="wa" value="<?php if(isset($_POST['wa'])) echo htmlspecialchars($_POST['wa'])?>">
+            </div>
+            <?php echo "<div>";
+                if(isset($errors['wa'])) echo $errors['wa'];
+            echo "</div>";
+            ?>
+            <div>
+                <label>Password</label>
+                <input type="Password" name="passwd" value="<?php if(isset($_POST['passwd'])) echo htmlspecialchars($_POST['passwd'])?>">
+            </div>
+            <?php echo "<div>";
+                if(isset($errors['passwd'])) echo $errors['passwd'];
+            echo "</div>";
+            ?>
+            <div>
+                <input type="submit" name="ok" value="ok">
+            </div>
         </div>
-        <?php echo "<div>";
-            if(isset($errors['nim'])) echo $errors['nim'];
-        echo "</div>";
-        ?>
-        <div>
-            <label>Nama</label>
-            <input type="text" name="nama" value="<?php if(isset($_POST['nama'])) echo htmlspecialchars($_POST['nama'])?>">
-        </div>
-        <?php echo "<div>";
-            if(isset($errors['nama'])) echo $errors['nama'];
-        echo "</div>";
-        ?>
-        <div>
-            <label>Email</label>
-            <input type="text" name="email" value="<?php if(isset($_POST['email'])) echo htmlspecialchars($_POST['email'])?>">
-        </div>
-        <?php echo "<div>";
-            if(isset($errors['email'])) echo $errors['email'];
-        echo "</div>";
-        ?>
-        <div>
-            <label>Whatsapp</label>
-            <input type="text" name="wa" value="<?php if(isset($_POST['wa'])) echo htmlspecialchars($_POST['wa'])?>">
-        </div>
-        <?php echo "<div>";
-            if(isset($errors['wa'])) echo $errors['wa'];
-        echo "</div>";
-        ?>
-        <div>
-            <label>Password</label>
-            <input type="Password" name="passwd" value="<?php if(isset($_POST['passwd'])) echo htmlspecialchars($_POST['passwd'])?>">
-        </div>
-        <?php echo "<div>";
-            if(isset($errors['passwd'])) echo $errors['passwd'];
-        echo "</div>";
-        ?>
-        <div>
-            <input type="submit" name="ok" value="ok">
-        </div>        
+                
     </form>
 </div>
+</body>
+</html>
 
 >>prosesdata.php
 <?php
-	$q = new PDO('mysql:HOST=localhost;dbname=uas1', 'root', '');
+	$q = new PDO('mysql:HOST=localhost;dbname=uas', 'root', '');
 	$q->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 	function pushdata(){
 		global $q;
-		$s = $q->prepare('INSERT INTO tabel01(nim,nama,email,wa,password) VALUES (:nim, :nama, :email, :wa, SHA2(:password,0))');
-		$s->bindValue(':nim',$_POST['nim']);
-		$s->bindValue(':nama',$_POST['nama']);
-		$s->bindValue(':email',$_POST['email']);
-		$s->bindValue(':wa',$_POST['wa']);
-		$s->bindValue(':password',$_POST['passwd']);
-		$s->execute();
+		$st1 = $q->prepare('INSERT INTO tabel01(nama,email,wa,password) VALUES ( :nama, :email, :wa, SHA2(:password,0))');
+		$st1->bindValue(':nama',$_POST['nama']);
+		$st1->bindValue(':email',$_POST['email']);
+		$st1->bindValue(':wa',$_POST['wa']);
+		$st1->bindValue(':password',$_POST['passwd']);
+		$st1->execute();
+
+        // $st2 = $q->prepare('INSERT INTO tabel02(kode_ukm, nama_ukm) VALUES(:kode_ukm, :nama_ukm)');
+        // $st2->bindValue(':kode_ukm',$_POST['kode_ukm']);
+        // $st2->bindValue(':nama_ukm',$_POST['nama_ukm']);
+        // $st2->execute();       
 	}
 
 	$errors=array();
@@ -122,20 +133,29 @@ ALTER table table02
         validateEmail($errors, $_POST, 'email');
         validatePassword($errors, $_POST, 'passwd');
         validateNumber($errors, $_POST, 'wa');
-        validateNumber($errors, $_POST, 'nim');
+        //validateName($errors, $_POST, 'nama_ukm');
         if($errors){
-            require 'form_tabel01.php';
+            require 'form_table01.php';
         }else{
             pushdata(); 
         }
-    }else{
-        require 'form_tabel01.php';
     }
-?>
 
+    // if(isset($_POST['set'])){
+    //     require 'validate.inc';
+    //     validateNumber($errors, $_POST, 'kode_ukm');
+    //     validateName($errors, $_POST, 'nama_ukm');
+    //     if($errors){
+    //         require 'form_table02.php';
+    //     }else{
+    //         pushdata(); 
+    //     }
+    // }
+?>
 >> VALIDATE.INC
 <?php
 
+<?php
 function validateName(&$errors, $field_list, $field_name) {
     if (!preg_match("/^[a-zA-Z ]*$/", $field_list[$field_name]))  
         $errors[$field_name] = 'Hanya boleh alfabet';
